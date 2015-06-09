@@ -1,0 +1,68 @@
+---
+    ###################
+    # User Management
+    ###################
+- name: Create user {{ user }}
+  user: name="{{ user }}"
+        comment="{{ user }} user"
+        shell=/bin/zsh
+        groups=www-data
+
+- name: Add our public keys to {{ user }}
+  authorized_key: user="{{ user }}"
+                  key="{{ item }}"
+  with_file:
+    - imad.pub
+    - alex.pub
+
+- name: Add our public keys to root
+  authorized_key: user=root
+                  key="{{ item }}"
+  with_file:
+    - imad.pub
+    - alex.pub
+
+    ###################
+    # Time management
+    ###################
+- name: Set local timezone
+  copy: content="{{ timezone }}"
+        dest=/etc/timezone
+  notify: update tzdata
+
+- name: Install NTP (and update apt cache for the first install)
+  apt: name=ntp
+       state=present
+       update_cache=yes
+
+- name: Start the ntp service
+  service: name=ntp
+           state=started
+           enabled=true
+
+    ###################
+    # Security
+    ###################
+- name: Copy iptables rules
+  copy: src=iptables.rules
+        dest=/etc/rules.ipv4
+
+  notify: restart iptables
+
+- name: Copy iptables init script # To load iptables on server restart
+  copy: src=iptables-script
+        dest=/etc/network/if-pre-up.d/iptables
+        mode=0755
+
+    ###################
+    # Misc. tools
+    ###################
+- name: Install usefull system tools
+  apt: name={{ item }} state=present
+  with_items:
+        - vim
+        - htop
+        - git
+        - ncdu
+        - zsh
+        - screen
