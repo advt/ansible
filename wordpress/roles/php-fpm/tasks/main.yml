@@ -12,5 +12,5 @@
   notify: restart php5-fpm
 
 - name: Copy php-fpm configuration
-  template: src=wordpress.conf dest=/etc/php5/fpm/pool.d/
+  template: src=wordpress.conf dest=/etc/php5/fpm/pool.d/{{ server_hostname }}.conf
   notify: restart php5-fpm
