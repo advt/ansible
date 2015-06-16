@@ -9,8 +9,8 @@
         groups=www-data
 
 - name: Add our public keys to {{ user }}
-  authorized_key: user="{{ user }}"
-                  key="{{ item }}"
+  authorized_key: user={{ user }}
+                  key={{ item }}
   with_file:
     - imad.pub
     - alex.pub
@@ -26,7 +26,7 @@
     # Time management
     ###################
 - name: Set local timezone
-  copy: content="{{ timezone }}"
+  copy: content={{ timezone }}
         dest=/etc/timezone
   notify: update tzdata
 
@@ -66,3 +66,11 @@
         - ncdu
         - zsh
         - screen
+- name: Install wp-cli
+  get_url:
+    url: https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+    dest: "{{ wordpress_wp_cli_install_dir }}/wp-cli"
+    owner: root
+    group: root
+    mode: 0755
+

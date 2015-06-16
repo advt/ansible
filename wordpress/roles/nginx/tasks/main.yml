@@ -13,7 +13,7 @@
   template: src=log.conf dest=/etc/nginx/conf.d/
 
 - name: Copy nginx logrotate configuration
-  template: src=logrotate dest=/etc/logrotate.d/etc/{{ server_hostname }}
+template: src=logrotate dest=/etc/logrotate.d/{{ server_hostname }}-nginx
 
 - name: Copy nginx configuration for wordpress
   template: src=default.conf dest=/etc/nginx/sites-available/{{ server_hostname }}.conf
